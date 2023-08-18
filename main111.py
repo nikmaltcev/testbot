@@ -1,0 +1,91 @@
+
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton  # pip install aiogram
+
+from aiogram import Dispatcher, Bot, executor, types
+
+from aiogram.types.web_app_info import WebAppInfo
+
+from random import randint, choice
+
+from string import ascii_letters, digits, punctuation
+
+
+API_TOKEN = "6507610313:AAF-hsgN_ds5G3Us7aCMo_3bhw06ufYMW4Q"
+
+
+# инициализация ботика...
+
+bot = Bot(token='6507610313:AAF-hsgN_ds5G3Us7aCMo_3bhw06ufYMW4Q')
+
+dispatcher = Dispatcher(bot)
+
+
+# Создание клавиатуры
+
+order = KeyboardButton("Заказать услугу")
+
+price = KeyboardButton('Цена')
+
+btn_other = KeyboardButton("Другое")
+
+
+main_menu = ReplyKeyboardMarkup(resize_keyboard=True).add(order, price, btn_other)
+
+
+btn_order = KeyboardButton('Заказать услугу')
+
+btn_main = KeyboardButton('Вернуться в гл. меню')
+
+
+other_menu = ReplyKeyboardMarkup(resize_keyboard=True).add(btn_order, btn_main)
+
+
+@dispatcher.message_handler(commands=['start'])
+
+async def start(message: types.Message):
+
+    await bot.send_message(message.from_user.id, f" Привет, {message.from_user.first_name}, я БИМ чат-бот, Ваш помощник в оформлении заказа на видеопослание от ведущих Бим-радио. Чтобы Вы смогли легко во всем разобраться - жмите на кнопку!", reply_markup=main_menu)
+
+
+
+@dispatcher.message_handler()
+
+async def messages(message: types.Message):
+
+    if message.text == 'Рандомное число':
+
+        await bot.send_message(message.from_user.id, f' Рандомное число: {randint(0, 100)}')
+
+    elif message.text == ' Придумать пароль':
+
+        password = "".join([choice(str(digits + ascii_letters + punctuation)) for _ in range(24)])
+
+        await bot.send_message(message.from_user.id, f' Надёжный пароль: {password}')
+
+    elif message.text == 'Цена':
+
+
+        await bot.send_message(message.from_user.id, 'Стоимость видеопослания 2900 руб.', reply_markup=other_menu)
+
+    elif message.text == 'Заказать услугу':
+
+        markup = types.ReplyKeyboardMarkup()
+
+        markup.add(types.KeyboardButton('Продолжить', web_app=WebAppInfo(url='https://forms.yandex.ru/u/64d4981deb6146039bd57a2f/')))
+	await message.answer('Для оформления заказа, нажмите продолжить', reply_markup=markup)
+
+    elif message.text == 'Вернуться в гл. меню':
+
+        await bot.send_message(message.from_user.id, ' Открываю меню...', reply_markup=main_menu)
+
+    else:
+
+        await bot.send_message(message.from_user.id, f' Ботик вас не понял... :(')
+
+        
+
+
+
+if __name__ == '__main__':
+
+    executor.start_polling(dispatcher, skip_updates=True)

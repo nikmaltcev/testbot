@@ -1,0 +1,22 @@
+from aiogram import Bot, Dispatcher, executor, types
+from aiogram.types.web_app_info import WebAppInfo
+import daemon
+
+
+bot = Bot('6321531134:AAEXjvS8KWaTwdfxrJpBPnhwzqmValHhmwc') dp = Dispatcher(bot)
+
+
+
+@dp.message_handler(commands=['start']) async def start(message: types.Message):
+from spam import do_main_program
+    markup = types.ReplyKeyboardMarkup() 
+    markup.add(types.KeyboardButton('Записаться!', 
+    web_app=WebAppInfo(url='https://b420156.yclients.com/'))) await 
+    message.answer('Приветствуем в нашем барбершопе! Мы находимся по адресу г. 
+    Казань, ул. Сары Садыковой 5', reply_markup=markup)
+
+
+executor.start_polling(dp)
+with daemon.DaemonContext():
+
+    do_main_program()
